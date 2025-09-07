@@ -6,7 +6,13 @@ services:
     buildCommand: ""
     startCommand: gunicorn backend.wsgi:application --bind 0.0.0.0:8000
     postDeployCommand: |
-      python manage.py migrate &&
-      python manage.py shell -c "from django.contrib.auth.models import User; \
-if not User.objects.filter(username='admin').exists(): \
-    User.objects.create_superuser('admin', 'admin@example.com', 'admin123')"
+      set -e
+      python manage.py migrate
+      python manage.py shell -c "
+from django.contrib.auth.models import User;
+username='admin';
+password='admin123';
+email='admin@example.com';
+if not User.objects.filter(username=username).exists():
+    User.objects.create_superuser(username, email, password)
+"
