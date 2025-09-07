@@ -68,3 +68,15 @@ STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'static'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# --- AUTO CREATE SUPERUSER ---
+import os
+from django.contrib.auth.models import User
+from django.db.utils import OperationalError
+
+try:
+    if not User.objects.filter(username="admin").exists():
+        User.objects.create_superuser("admin", "admin@example.com", "admin123")
+except OperationalError:
+    # Таблиц ещё нет (первая миграция), будет создано позже
+    pass
